@@ -14,42 +14,47 @@ Zuev Aleksandr, 2020, all rigths reserved.*/
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 #endregion
 
 namespace ClearUnusedGUIDs
 {
-    public class SharedParameterContainer
+    public class MyParameterGroup
     {
-        public string name;
-#if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
-        public BuiltInParameterGroup paramGroup;
-#else
-        public ForgeTypeId paramGroup;
-#endif
-        public bool isInstance;
-        public bool isDefineByFormula;
-        public string formula;
-        public InternalDefinition intDefinition;
-        public Guid guid;
-        public ExternalDefinition exDefinition;
+        public string Name { get; set; }
 
-        public SharedParameterContainer(string Name, Guid ParamGuid,
 #if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
-            BuiltInParameterGroup ParamGroup, 
+        public BuiltInParameterGroup Group { get; set; }
 #else
-            ForgeTypeId ParamGroup,
+        public ForgeTypeId Group { get; set; }
 #endif
-
-            bool IsInstance, InternalDefinition ParamDefinition)
+        public override string ToString()
         {
-            name = Name;
-            paramGroup = ParamGroup;
-            isInstance = IsInstance;
-            intDefinition = ParamDefinition;
-            guid = ParamGuid;
+            return Name;
+        }
+
+        public static List<MyParameterGroup> GetGroupList()
+        {
+            List<MyParameterGroup> list = new List<MyParameterGroup>();
+#if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
+            List<BuiltInParameterGroup> groups = Enum.GetValues(typeof(BuiltInParameterGroup)).Cast<BuiltInParameterGroup>().ToList();
+            foreach (var group in groups)
+            {
+                string name = LabelUtils.GetLabelFor(group);
+                MyParameterGroup mpg = new MyParameterGroup { Name = name, Group = group };
+                list.Add(mpg);
+            }
+#else
+            List<ForgeTypeId> groups = ParameterUtils.GetAllBuiltInGroups().ToList();
+            foreach (var group in groups)
+            {
+                string name = LabelUtils.GetLabelForGroup(group);
+                MyParameterGroup mpg = new MyParameterGroup { Name = name, Group = group };
+                list.Add(mpg);
+            }
+#endif
+            list = list.OrderBy(x => x.Name).ToList();
+            return list;
         }
     }
 }

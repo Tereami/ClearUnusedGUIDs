@@ -59,16 +59,17 @@ namespace ClearUnusedGUIDs
                 .ToList();
             myDefs.Sort();
 
+            var allGroups = MyParameterGroup.GetGroupList();
 
-            List<BuiltInParameterGroup> groups = Enum.GetValues(typeof(BuiltInParameterGroup)).Cast<BuiltInParameterGroup>().ToList();
-
-            FormAddParameters form = new FormAddParameters(myDefs, groups);
+            FormAddParameters form = new FormAddParameters(myDefs, allGroups);
 
             if (form.ShowDialog() != System.Windows.Forms.DialogResult.OK) return Result.Cancelled;
 
             myDefs = form.defs;
             bool isInstance = form.isInstance;
-            BuiltInParameterGroup paramGroup = form.selectedGroup;
+
+            MyParameterGroup paramGroup = form.selectedGroup;
+
             FamilyManager fManager = doc.FamilyManager;
 
             int c = 0, e = 0;
@@ -82,7 +83,7 @@ namespace ClearUnusedGUIDs
                     {
                         t.Start("Добавление параметра: " + myDef.exDef.Name);
                         ExternalDefinition exDef = myDef.exDef;
-                        fManager.AddParameter(exDef, paramGroup, isInstance);
+                        fManager.AddParameter(exDef, paramGroup.Group, isInstance);
                         t.Commit();
                     }
                     c++;

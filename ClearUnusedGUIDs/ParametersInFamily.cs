@@ -37,7 +37,11 @@ namespace ClearUnusedGUIDs
                 bool isInstance = fParam.IsInstance;
                 InternalDefinition def = fParam.Definition as InternalDefinition;
                 Guid guid = fParam.GUID;
+#if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
                 BuiltInParameterGroup paramGroup = fParam.Definition.ParameterGroup;
+#else
+                ForgeTypeId paramGroup = fParam.Definition.GetGroupTypeId();
+#endif
 
                 SharedParameterContainer paramContainer = new SharedParameterContainer(name, guid, paramGroup, isInstance, def);
 

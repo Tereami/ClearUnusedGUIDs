@@ -28,22 +28,30 @@ namespace ClearUnusedGUIDs
     {
         public List<MyExParamDefinition> defs;
         public bool isInstance;
-        public Autodesk.Revit.DB.BuiltInParameterGroup selectedGroup;
 
-        public FormAddParameters(List<MyExParamDefinition> Defs, List<Autodesk.Revit.DB.BuiltInParameterGroup> Groups)
+        public MyParameterGroup selectedGroup;
+
+
+        public FormAddParameters(List<MyExParamDefinition> Defs, List<MyParameterGroup> Groups)
         {
             InitializeComponent();
             defs = Defs;
             listBoxParams.DataSource = defs;
+#if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
             comboBoxGrouping.DataSource = Groups;
-            comboBoxGrouping.SelectedItem = Groups.Find(i => i == Autodesk.Revit.DB.BuiltInParameterGroup.PG_DATA);
+            comboBoxGrouping.SelectedItem = Groups.Find(i => i.Group == Autodesk.Revit.DB.BuiltInParameterGroup.PG_DATA);
+#else
+            comboBoxGrouping.SelectedItem = Groups.Find(i => i.Group == Autodesk.Revit.DB.GroupTypeId.Data);
+#endif
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
             defs = listBoxParams.SelectedItems.Cast<MyExParamDefinition>().ToList();
             isInstance = radioButtonByInstance.Checked;
-            selectedGroup = (Autodesk.Revit.DB.BuiltInParameterGroup)comboBoxGrouping.SelectedItem;
+
+            selectedGroup = (MyParameterGroup)comboBoxGrouping.SelectedItem;
+
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

@@ -26,9 +26,9 @@ namespace ClearUnusedGUIDs
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            Debug.Listeners.Clear();
-            Debug.Listeners.Add(new RbsLogger.Logger("ClearGuids"));
-            Debug.WriteLine("ClearGuid start");
+            Trace.Listeners.Clear();
+            Trace.Listeners.Add(new RbsLogger.Logger("ClearGuids"));
+            Trace.WriteLine("ClearGuid start");
 
             FormCheck form1 = new FormCheck();
             form1.ShowDialog();
@@ -45,7 +45,7 @@ namespace ClearUnusedGUIDs
                 .Select(i => new MyParameterDefinition(i))
                 .ToList();
 
-            Debug.WriteLine("parameters found: " + sparams.Count.ToString());
+            Trace.WriteLine("parameters found: " + sparams.Count.ToString());
             FormSelectGuids frm = new FormSelectGuids(sparams);
 
             if (frm.ShowDialog() != System.Windows.Forms.DialogResult.OK)
@@ -53,12 +53,16 @@ namespace ClearUnusedGUIDs
                 return Result.Cancelled;
             }
 
-            Debug.WriteLine("Parameters to delete: " + frm.selectedIds.Count.ToString());
+            Trace.WriteLine("Parameters to delete: " + frm.selectedIds.Count.ToString());
 
             List<ElementId> ids = new List<ElementId>();
             foreach(int id in frm.selectedIds)
             {
+#if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
                 ids.Add(new ElementId(id));
+#else
+                ids.Add(new ElementId((long)id));
+#endif
             }
 
             using(Transaction t = new Transaction(doc))
@@ -68,7 +72,7 @@ namespace ClearUnusedGUIDs
                 t.Commit();
             }
 
-            Debug.WriteLine("Delete parameters is done");
+            Trace.WriteLine("Delete parameters is done");
 
             return Result.Succeeded;
         }

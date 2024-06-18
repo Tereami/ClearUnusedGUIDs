@@ -32,14 +32,15 @@ namespace ClearUnusedGUIDs
         public MyParameterDefinition(SharedParameterElement Spe)
         {
             spe = Spe;
-            id = Spe.Id.IntegerValue;
+
+            id = Spe.Id.GetValue();
             paramName = spe.Name;
             guid = spe.GuidValue.ToString();
         }
 
         public override string ToString()
         {
-            string name = id + " : " + paramName + " : " + guid;
+            string name = $"{id} : {paramName} : {guid}";
             return name;
         }
     }

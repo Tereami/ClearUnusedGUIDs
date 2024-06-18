@@ -34,7 +34,7 @@ namespace ClearUnusedGUIDs
 
             if (!famdoc.IsFamilyDocument)
             {
-                message = "Инструмнет доступен только в редакторе семейств";
+                message = "Инструмент доступен только в редакторе семейств";
                 return Result.Failed;
             }
 
@@ -65,7 +65,12 @@ namespace ClearUnusedGUIDs
             {
                 DefinitionGroup tempGroup = defFile.Groups.Create(spc.name);
                 Definitions defs = tempGroup.Definitions;
-                ExternalDefinitionCreationOptions defOptions = new ExternalDefinitionCreationOptions(spc.name, spc.intDefinition.ParameterType);
+                ExternalDefinitionCreationOptions defOptions = new ExternalDefinitionCreationOptions(spc.name, 
+#if R2017 || R2018 || R2019 || R2020 || R2021 
+                spc.intDefinition.ParameterType);
+#else
+                spc.intDefinition.GetDataType());
+#endif
                 defOptions.GUID = spc.guid;
 
                 spc.exDefinition = defs.Create(defOptions) as ExternalDefinition;
