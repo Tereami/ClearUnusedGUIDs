@@ -28,7 +28,7 @@ namespace ClearUnusedGUIDs
         {
             Trace.Listeners.Clear();
             Trace.Listeners.Add(new RbsLogger.Logger("ClearGuids"));
-            Trace.WriteLine("ClearGuid start");
+            Debug.WriteLine("ClearGuid start");
 
             FormCheck form1 = new FormCheck();
             form1.ShowDialog();
@@ -45,7 +45,7 @@ namespace ClearUnusedGUIDs
                 .Select(i => new MyParameterDefinition(i))
                 .ToList();
 
-            Trace.WriteLine("parameters found: " + sparams.Count.ToString());
+            Debug.WriteLine("parameters found: " + sparams.Count.ToString());
             FormSelectGuids frm = new FormSelectGuids(sparams);
 
             if (frm.ShowDialog() != System.Windows.Forms.DialogResult.OK)
@@ -53,7 +53,7 @@ namespace ClearUnusedGUIDs
                 return Result.Cancelled;
             }
 
-            Trace.WriteLine("Parameters to delete: " + frm.selectedIds.Count.ToString());
+            Debug.WriteLine("Parameters to delete: " + frm.selectedIds.Count.ToString());
 
             List<ElementId> ids = new List<ElementId>();
             foreach(int id in frm.selectedIds)
@@ -72,7 +72,7 @@ namespace ClearUnusedGUIDs
                 t.Commit();
             }
 
-            Trace.WriteLine("Delete parameters is done");
+            Debug.WriteLine("Delete parameters is done");
 
             return Result.Succeeded;
         }
