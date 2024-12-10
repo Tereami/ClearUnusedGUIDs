@@ -11,14 +11,12 @@ This code is provided 'as is'. Author disclaims any implied warranty.
 Zuev Aleksandr, 2020, all rigths reserved.*/
 #endregion
 #region usings
+using Autodesk.Revit.ApplicationServices;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.ApplicationServices;
 #endregion
 
 namespace ClearUnusedGUIDs
@@ -31,7 +29,7 @@ namespace ClearUnusedGUIDs
             Document doc = commandData.Application.ActiveUIDocument.Document;
             if (!doc.IsFamilyDocument)
             {
-                message = "Команда доступна только в режиме редактирования семейства.";
+                message = MyStrings.ErrorAvailableOnlyInFamilyEditor;
                 return Result.Failed;
             }
 
@@ -40,7 +38,7 @@ namespace ClearUnusedGUIDs
             DefinitionFile defFile = app.OpenSharedParameterFile();
             if (defFile == null)
             {
-                message = "Не указан файл общих параметров.";
+                message = MyStrings.ErrorNoSharedParamsFile;
                 return Result.Failed;
             }
 
@@ -81,7 +79,7 @@ namespace ClearUnusedGUIDs
                 {
                     using (Transaction t = new Transaction(doc))
                     {
-                        t.Start("Добавление параметра: " + myDef.exDef.Name);
+                        t.Start($"{MyStrings.TransactionAddParameter}: {myDef.exDef.Name}");
                         ExternalDefinition exDef = myDef.exDef;
                         fManager.AddParameter(exDef, paramGroup.Group, isInstance);
                         t.Commit();
@@ -94,14 +92,14 @@ namespace ClearUnusedGUIDs
                     errmsg = ex.Message;
                 }
             }
-            string msg = "Успешно добавлено параметров: " + c;
+            string msg = $"{MyStrings.ResultParametersAdded}: {c}";
 
             if (e > 0)
             {
-                msg += "\nНе удалось добавить: " + e + "\n" + errmsg;
+                msg += $"\n:{MyStrings.ResultFailedToAdd} {e}\n{errmsg}";
             }
 
-            TaskDialog.Show("Отчет", msg);
+            TaskDialog.Show(MyStrings.TransactionAddParameter, msg);
 
 
             return Result.Succeeded;

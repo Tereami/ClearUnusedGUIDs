@@ -11,13 +11,10 @@ This code is provided 'as is'. Author disclaims any implied warranty.
 Zuev Aleksandr, 2020, all rigths reserved.*/
 #endregion
 #region usings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using System;
+using System.Collections.Generic;
 using System.IO;
 #endregion
 
@@ -34,12 +31,12 @@ namespace ClearUnusedGUIDs
 
             if (!famdoc.IsFamilyDocument)
             {
-                message = "Инструмент доступен только в редакторе семейств";
+                message = MyStrings.ErrorAvailableOnlyInFamilyEditor;
                 return Result.Failed;
             }
 
             System.Windows.Forms.OpenFileDialog openDialog = new System.Windows.Forms.OpenFileDialog();
-            openDialog.Title = "Выберите семейство-аналог";
+            openDialog.Title = MyStrings.MessageSelectFamilyAnalog;
             openDialog.Multiselect = false;
 
             if (openDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
@@ -65,8 +62,8 @@ namespace ClearUnusedGUIDs
             {
                 DefinitionGroup tempGroup = defFile.Groups.Create(spc.name);
                 Definitions defs = tempGroup.Definitions;
-                ExternalDefinitionCreationOptions defOptions = new ExternalDefinitionCreationOptions(spc.name, 
-#if R2017 || R2018 || R2019 || R2020 || R2021 
+                ExternalDefinitionCreationOptions defOptions = new ExternalDefinitionCreationOptions(spc.name,
+#if R2017 || R2018 || R2019 || R2020 || R2021
                 spc.intDefinition.ParameterType);
 #else
                 spc.intDefinition.GetDataType());
@@ -93,7 +90,7 @@ namespace ClearUnusedGUIDs
                 {
                     using (Transaction t = new Transaction(famdoc))
                     {
-                        t.Start("Добавление параметров");
+                        t.Start($"{MyStrings.TransactionAddParameter} {spc.name}");
                         fMan.AddParameter(spc.exDefinition, spc.paramGroup, spc.isInstance);
                         t.Commit();
                     }
@@ -115,10 +112,10 @@ namespace ClearUnusedGUIDs
             System.IO.File.Delete(txtPath);
             app.SharedParametersFilename = oldSharedParamFilePath;
 
-            string msg = "Успешно добавлено параметров: " + c;
-            if (ex > 0) msg += "\nУже присутствовали в семействе: " + ex;
-            if (er > 0) msg += "\nНе удалось добавить: " + er + "\n" + errMsg;
-            TaskDialog.Show("Добавление параметров", msg);
+            string msg = $"{MyStrings.ResultParametersAdded}: {c}";
+            if (ex > 0) msg += $"\n{MyStrings.ResultParamsAlreadyAdded}: " + ex;
+            if (er > 0) msg += $"\n{MyStrings.ResultFailedToAdd}: {er}\n{errMsg}";
+            TaskDialog.Show(MyStrings.TransactionAddParameter, msg);
 
             return Result.Succeeded;
         }

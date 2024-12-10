@@ -11,12 +11,11 @@ This code is provided 'as is'. Author disclaims any implied warranty.
 Zuev Aleksandr, 2020, all rigths reserved.*/
 #endregion
 #region usings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 #endregion
 
 namespace ClearUnusedGUIDs
@@ -56,7 +55,7 @@ namespace ClearUnusedGUIDs
             Debug.WriteLine("Parameters to delete: " + frm.selectedIds.Count.ToString());
 
             List<ElementId> ids = new List<ElementId>();
-            foreach(int id in frm.selectedIds)
+            foreach (int id in frm.selectedIds)
             {
 #if R2017 || R2018 || R2019 || R2020 || R2021 || R2022 || R2023
                 ids.Add(new ElementId(id));
@@ -65,9 +64,9 @@ namespace ClearUnusedGUIDs
 #endif
             }
 
-            using(Transaction t = new Transaction(doc))
+            using (Transaction t = new Transaction(doc))
             {
-                t.Start("Удаление определений общих параметров");
+                t.Start(MyStrings.TransactionDeleteGuids);
                 doc.Delete(ids);
                 t.Commit();
             }
