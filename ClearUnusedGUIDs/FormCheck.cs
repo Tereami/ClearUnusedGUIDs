@@ -38,14 +38,7 @@ namespace ClearUnusedGUIDs
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBox1.Checked == true)
-            {
-                buttonOk.Enabled = true;
-            }
-            else
-            {
-                buttonOk.Enabled = false;
-            }
+            buttonOk.Enabled = checkBox1.Checked;
         }
     }
 }
